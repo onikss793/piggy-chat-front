@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '../styles/breakpoints';
-import GlobalStyles from '../styles/reset';
+import GlobalStyles from '../styles/global-styles';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

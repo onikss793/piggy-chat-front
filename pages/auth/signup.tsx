@@ -25,7 +25,7 @@ const BackgroundImg = styled.div<{ image: { src: string } }>`
 const Text = styled.div`
   font-size: 14px;
   text-align: center;
-  color: ${Color.gray};
+  color: ${Color['gray']};
   margin-top: 10px;
 `;
 const BtnContainer = styled.div`
