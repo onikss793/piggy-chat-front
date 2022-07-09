@@ -5,18 +5,28 @@ import CancelImg from '../public/assets/header/Cancel.png';
 import LeftChevronImg from '../public/assets/header/LeftChevron.png';
 
 interface Props {
-  children: ReactNode;
-  button: 'CANCEL' | 'BACK';
+  children?: ReactNode;
+  button?: 'CANCEL' | 'BACK';
+  titleAlign?: 'CENTER' | 'LEFT';
 }
+
+const getTitleAlign = (titleAlign: 'CENTER' | 'LEFT') => {
+  switch (titleAlign) {
+    case 'CENTER':
+      return 'center';
+    case 'LEFT':
+      return 'flex-start';
+  }
+};
 
 const Container = styled.div`
   position: absolute;
   top: 0;
   left: 0;
 `;
-const Div = styled.div`
+const Div = styled.div<{ titleAlign: 'CENTER' | 'LEFT' }>`
   display: flex;
-  justify-content: center;
+  justify-content: ${({ titleAlign }) => getTitleAlign(titleAlign)};
   align-items: center;
   position: relative;
   height: 54px;
@@ -52,10 +62,10 @@ const LeftChevron = styled.div<{ image: { src: string } }>`
   left: 15px;
 `;
 
-const Header = ({ children, button }: Props) => {
+const Header = ({ children, button, titleAlign = 'CENTER' }: Props) => {
   return (
     <Container>
-      <Div>
+      <Div titleAlign={titleAlign}>
         {button === 'CANCEL' ? <Cancel image={CancelImg} /> : null}
         {button === 'BACK' ? <LeftChevron image={LeftChevronImg} /> : null}
         {children}
