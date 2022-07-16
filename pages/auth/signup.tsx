@@ -1,9 +1,11 @@
+import { useRouter } from 'next/router';
+import type { SyntheticEvent } from 'react';
 import styled from 'styled-components';
-import { Header, Layout, Title } from '../../components';
-import { Color } from '../../styles/palette';
-import SignupImg from '../../public/assets/auth/Signup.png';
-import AppleLoginImg from '../../public/assets/auth/AppleLogin.png';
-import KakaoLoginImg from '../../public/assets/auth/KakaoLogin.png';
+import { PlainHeader, Layout, Title } from 'components';
+import { Color } from 'styles/palette';
+import SignupImg from 'public/assets/auth/Signup.png';
+import AppleLoginImg from 'public/assets/auth/AppleLogin.png';
+import KakaoLoginImg from 'public/assets/auth/KakaoLogin.png';
 
 const Container = styled.div`
   display: flex;
@@ -11,7 +13,7 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   padding-top: 54px;
-  height: 667px;
+  margin-top: 90px
 `;
 const BackgroundImg = styled.div<{ image: { src: string } }>`
   background-image: url(${props => props.image.src});
@@ -41,6 +43,7 @@ const LoginBtn = styled.div<{ image: { src: string } }>`
   background-size: contain;
   width: 327px;
   height: 54px;
+  cursor: pointer;
 
   &:not(:last-child) {
     margin-bottom: 10px;
@@ -48,11 +51,18 @@ const LoginBtn = styled.div<{ image: { src: string } }>`
 `;
 
 const Signup = () => {
+  const router = useRouter();
+
+  const login = (e: SyntheticEvent) => {
+    e.preventDefault();
+    void router.push('/auth/profile');
+  };
+
   return (
     <Layout>
-      <Header button='CANCEL'>
+      <PlainHeader button='CANCEL'>
         <Title title={'회원가입'} />
-      </Header>
+      </PlainHeader>
 
       <Container>
         <BackgroundImg image={SignupImg} />
@@ -62,8 +72,8 @@ const Signup = () => {
         </Text>
 
         <BtnContainer>
-          <LoginBtn image={AppleLoginImg} />
-          <LoginBtn image={KakaoLoginImg} />
+          <LoginBtn onClick={login} image={AppleLoginImg} />
+          <LoginBtn onClick={login} image={KakaoLoginImg} />
         </BtnContainer>
       </Container>
     </Layout>

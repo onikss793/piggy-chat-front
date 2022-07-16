@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-import { Color } from '../styles/palette';
+import { Color } from 'styles/palette';
 
 interface Props {
   title: string;
+  styles?: Record<string, string>;
 }
 
 const Text = styled.span`
@@ -12,9 +13,9 @@ const Text = styled.span`
   color: ${Color.black};
 `;
 
-const Title = ({ title }: Props) => {
+const Title = ({ title, styles }: Props) => {
   return (
-    <Text>{title}</Text>
+    <Text style={{ ...styles, textAlign: 'left' }}>{title}</Text>
   );
 };
 

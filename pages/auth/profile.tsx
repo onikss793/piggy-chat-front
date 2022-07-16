@@ -1,19 +1,16 @@
 import { isEmpty, isNil, debounce } from 'lodash';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { SyntheticEvent, useEffect, useState } from 'react';
-import {
-  useMemo,
-} from '../../../../../../Applications/WebStorm.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/react';
-import { Header, Layout, Title } from '../../components';
-import { HEADER_HEIGHT } from '../../styles/constants';
-import ProfileImg from '../../public/assets/auth/Profile.png';
-import RemoveImg from '../../public/assets/auth/Remove.png';
-import VerifiedImg from '../../public/assets/auth/Verified.png';
+import { useEffect, useState } from 'react';
+import { PlainHeader, Layout, Title } from 'components';
+import ProfileImg from 'public/assets/auth/Profile.png';
+import RemoveImg from 'public/assets/auth/Remove.png';
+import VerifiedImg from 'public/assets/auth/Verified.png';
 import { useForm } from 'react-hook-form';
-import { Color } from '../../styles/palette';
+import { Color } from 'styles/palette';
 
 const Container = styled.div`
-  padding: ${HEADER_HEIGHT}px 20px 0 20px;
+  padding: 0 20px 0 20px;
 `;
 const Inner = styled.div`
   margin: 0 auto;
@@ -91,39 +88,41 @@ const Profile = () => {
     formState: { errors },
     watch,
     reset,
-    getFieldState,
     trigger,
     getValues,
   } = useForm<FormType>();
   const [isValidNickname, setIsValidNickname] = useState(false);
-  console.log(isValidNickname);
+  const router = useRouter();
+  const dep = watch().nickname;
+
   const submitNickname = (formData: FormType) => {
     const { nickname } = formData;
-    console.log('Send Nickname API');
+    console.log('Send Signup API');
+    console.log(nickname);
+    void router.replace('/auth/done');
   };
+
   const showRemoveBtn = (): boolean => {
     const { nickname } = watch();
-    if (isNil(nickname) || isEmpty(nickname)) {
-      return false;
-    }
-    return true;
+    return !(isNil(nickname) || isEmpty(nickname));
   };
+
   const debouncedCheckNickname = debounce(() => {
-    const isValidFromSerever = true; // check if the current nickname is valid from the server
+    const isValidFromServer = true; // check if the current nickname is valid from the server
     const { nickname } = getValues();
-    setIsValidNickname((!isEmpty(nickname) && isEmpty(errors.nickname) && isValidFromSerever));
+    setIsValidNickname((!isEmpty(nickname) && isEmpty(errors.nickname) && isValidFromServer));
   }, 500);
 
   useEffect(() => {
     !isEmpty(watch().nickname) && trigger('nickname');
     debouncedCheckNickname();
-  }, [watch().nickname]);
+  }, [debouncedCheckNickname, dep, trigger, watch]);
 
   return (
     <Layout>
-      <Header button='BACK'>
+      <PlainHeader button='BACK'>
         <Title title='프로필' />
-      </Header>
+      </PlainHeader>
 
       <Container>
         <Inner>

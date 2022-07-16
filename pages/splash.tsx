@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import LogoImg from '../public/assets/Logo.png';
+import LogoImg from 'public/assets/Logo.png';
 
 const Container = styled.div`
   display: flex;

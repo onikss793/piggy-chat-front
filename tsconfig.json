@@ -17,7 +17,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",
@@ -26,6 +27,6 @@
     "node_modules/@sendbird/uikit-react/index.d.ts"
   ],
   "exclude": [
-//    "node_modules"
+    //    "node_modules"
   ]
 }
