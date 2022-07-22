@@ -1,19 +1,18 @@
 import { isEmpty, isNil, debounce } from 'lodash';
+import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { SyntheticEvent, useEffect, useState } from 'react';
-import {
-  useMemo,
-} from '../../../../../../Applications/WebStorm.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/react';
-import { Header, Layout, Title } from '../../components';
-import { HEADER_HEIGHT } from '../../styles/constants';
-import ProfileImg from '../../public/assets/auth/Profile.png';
-import RemoveImg from '../../public/assets/auth/Remove.png';
-import VerifiedImg from '../../public/assets/auth/Verified.png';
+import { useEffect, useState } from 'react';
+import { PlainHeader, Layout, Title } from 'components';
+import ProfileImg from 'public/assets/auth/Profile.png';
+import RemoveImg from 'public/assets/auth/Remove.png';
+import VerifiedImg from 'public/assets/auth/Verified.png';
 import { useForm } from 'react-hook-form';
-import { Color } from '../../styles/palette';
+import { Color } from 'styles/palette';
+import useNickname from 'lib/hooks/useNickname';
+import { Routes } from '../../lib/utils';
 
 const Container = styled.div`
-  padding: ${HEADER_HEIGHT}px 20px 0 20px;
+  padding: 0 20px 0 20px;
 `;
 const Inner = styled.div`
   margin: 0 auto;
@@ -85,45 +84,49 @@ interface FormType {
 }
 
 const Profile = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     reset,
-    getFieldState,
     trigger,
-    getValues,
   } = useForm<FormType>();
   const [isValidNickname, setIsValidNickname] = useState(false);
-  console.log(isValidNickname);
+  const nicknameWatching = watch('nickname');
+  const { mutate: checkNickname, data } = useNickname();
+
   const submitNickname = (formData: FormType) => {
     const { nickname } = formData;
-    console.log('Send Nickname API');
+    console.log('Send Signup API', nickname);
+    void router.replace(Routes.SIGNUP_DONE);
   };
-  const showRemoveBtn = (): boolean => {
-    const { nickname } = watch();
-    if (isNil(nickname) || isEmpty(nickname)) {
-      return false;
-    }
-    return true;
-  };
-  const debouncedCheckNickname = debounce(() => {
-    const isValidFromSerever = true; // check if the current nickname is valid from the server
-    const { nickname } = getValues();
-    setIsValidNickname((!isEmpty(nickname) && isEmpty(errors.nickname) && isValidFromSerever));
+
+  const debouncedCheckNickname = debounce(async () => {
+    await checkNickname({ nickname: nicknameWatching });
+    const isValidFromServer = Boolean(data?.isUnique);
+    setIsValidNickname((!isEmpty(nicknameWatching) && isEmpty(errors.nickname) && isValidFromServer));
   }, 500);
 
   useEffect(() => {
-    !isEmpty(watch().nickname) && trigger('nickname');
+    !isEmpty(nicknameWatching) && trigger('nickname');
     debouncedCheckNickname();
-  }, [watch().nickname]);
+  }, [nicknameWatching]);
+
+  useEffect(() => {
+    if (data?.isUnique === false) {
+      console.error('duplicated nickname');
+    }
+  }, [data?.isUnique]);
+
+  const showRemoveBtn = !(isNil(nicknameWatching) || isEmpty(nicknameWatching));
 
   return (
     <Layout>
-      <Header button='BACK'>
+      <PlainHeader button='BACK'>
         <Title title='프로필' />
-      </Header>
+      </PlainHeader>
 
       <Container>
         <Inner>
@@ -139,7 +142,7 @@ const Profile = () => {
                   required: true,
                 })}
               />
-              {showRemoveBtn() ?
+              {showRemoveBtn ?
                 <VerifyBtn
                   image={isValidNickname ? VerifiedImg : RemoveImg}
                   onClick={() => isValidNickname ? null : reset()}

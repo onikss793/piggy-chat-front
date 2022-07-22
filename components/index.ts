@@ -1,9 +1,11 @@
-import Header from './header';
+import PlainHeader from './common/plain-header';
+import MainHeader from './common/main-header';
 import Title from './title';
 import Layout from './layout';
 
 export {
-  Header,
+  PlainHeader,
   Title,
   Layout,
+  MainHeader,
 };
