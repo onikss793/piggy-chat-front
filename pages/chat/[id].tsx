@@ -1,7 +1,7 @@
 // import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 import styled from 'styled-components';
-import Room from '../../components/chat/room';
+import Room from 'components/chat/room';
 
 const Container = styled.section`
   height: 100vh;

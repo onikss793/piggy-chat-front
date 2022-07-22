@@ -4,20 +4,25 @@ import { RecoilRoot } from 'recoil';
 import { ThemeProvider } from 'styled-components';
 import { theme } from 'styles/breakpoints';
 import GlobalStyles from 'styles/global-styles';
+import { QueryClientProvider, QueryClient } from 'react-query';
+
+export const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <meta name='viewport' content='initial-scale=1.0, maximum-scale=1.0' />
+        <meta name='viewport' content='initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' />
         <title>piggy-chat</title>
       </Head>
 
       <RecoilRoot>
-        <ThemeProvider theme={theme}>
-          <GlobalStyles />
-          <Component {...pageProps} />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <GlobalStyles />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </QueryClientProvider>
       </RecoilRoot>
     </>
   );

@@ -4,7 +4,7 @@ import ChannelUI from '@sendbird/uikit-react/Channel/components/ChannelUI';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ChannelListState, Channel } from '../../store/chat';
+import { ChannelListState, Channel } from 'store';
 import MyHeader from './header';
 
 import 'sendbird-uikit/dist/index.css';

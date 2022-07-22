@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Layout, MainHeader, Title } from 'components';
-import { ChannelListState } from '../store/chat';
-import { Color } from '../styles/palette';
+import { ChannelListState } from 'store';
+import { Color } from 'styles/palette';
+import { Routes } from '../lib/utils';
 
 const Container = styled.div`
   padding: 0 16px;
@@ -34,7 +35,7 @@ const channelData = [
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const goTo = (id: number) => router.push(`/chat/${id}`);
+  const goTo = (id: number) => router.push(Routes.CHAT_ROOM(id));
 
   const [channelList, setChannelList] = useRecoilState(ChannelListState);
 

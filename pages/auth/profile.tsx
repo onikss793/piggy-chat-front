@@ -8,6 +8,8 @@ import RemoveImg from 'public/assets/auth/Remove.png';
 import VerifiedImg from 'public/assets/auth/Verified.png';
 import { useForm } from 'react-hook-form';
 import { Color } from 'styles/palette';
+import useNickname from 'lib/hooks/useNickname';
+import { Routes } from '../../lib/utils';
 
 const Container = styled.div`
   padding: 0 20px 0 20px;
@@ -82,6 +84,7 @@ interface FormType {
 }
 
 const Profile = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -89,34 +92,35 @@ const Profile = () => {
     watch,
     reset,
     trigger,
-    getValues,
   } = useForm<FormType>();
   const [isValidNickname, setIsValidNickname] = useState(false);
-  const router = useRouter();
-  const dep = watch().nickname;
+  const nicknameWatching = watch('nickname');
+  const { mutate: checkNickname, data } = useNickname();
 
   const submitNickname = (formData: FormType) => {
     const { nickname } = formData;
-    console.log('Send Signup API');
-    console.log(nickname);
-    void router.replace('/auth/done');
+    console.log('Send Signup API', nickname);
+    void router.replace(Routes.SIGNUP_DONE);
   };
 
-  const showRemoveBtn = (): boolean => {
-    const { nickname } = watch();
-    return !(isNil(nickname) || isEmpty(nickname));
-  };
-
-  const debouncedCheckNickname = debounce(() => {
-    const isValidFromServer = true; // check if the current nickname is valid from the server
-    const { nickname } = getValues();
-    setIsValidNickname((!isEmpty(nickname) && isEmpty(errors.nickname) && isValidFromServer));
+  const debouncedCheckNickname = debounce(async () => {
+    await checkNickname({ nickname: nicknameWatching });
+    const isValidFromServer = Boolean(data?.isUnique);
+    setIsValidNickname((!isEmpty(nicknameWatching) && isEmpty(errors.nickname) && isValidFromServer));
   }, 500);
 
   useEffect(() => {
-    !isEmpty(watch().nickname) && trigger('nickname');
+    !isEmpty(nicknameWatching) && trigger('nickname');
     debouncedCheckNickname();
-  }, [debouncedCheckNickname, dep, trigger, watch]);
+  }, [nicknameWatching]);
+
+  useEffect(() => {
+    if (data?.isUnique === false) {
+      console.error('duplicated nickname');
+    }
+  }, [data?.isUnique]);
+
+  const showRemoveBtn = !(isNil(nicknameWatching) || isEmpty(nicknameWatching));
 
   return (
     <Layout>
@@ -138,7 +142,7 @@ const Profile = () => {
                   required: true,
                 })}
               />
-              {showRemoveBtn() ?
+              {showRemoveBtn ?
                 <VerifyBtn
                   image={isValidNickname ? VerifiedImg : RemoveImg}
                   onClick={() => isValidNickname ? null : reset()}
