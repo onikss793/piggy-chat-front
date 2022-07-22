@@ -1,7 +1,5 @@
 import axios from 'axios';
 import { useMutation } from 'react-query';
-import { useRecoilState } from 'recoil';
-import { AuthState } from 'store';
 import { axiosInstance, Endpoints, LOCAL_STORAGE, URLS } from '../utils';
 
 interface KakaoAuthResponse {
@@ -16,7 +14,6 @@ const { REDIRECT_URI } = URLS;
 const { ACCESS_TOKEN, REFRESH_TOKEN, ID } = LOCAL_STORAGE;
 
 export default function useKakaoLogin() {
-  const [_, setAuthState] = useRecoilState(AuthState);
   const kakaoLogin = async ({ code }: { code: string }): Promise<KakaoAuthResponse> => {
     const headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' };
     const { data: { access_token: accessToken } } = await axios.post(URLS.KAKAO_OAUTH_TOKEN,
@@ -38,17 +35,9 @@ export default function useKakaoLogin() {
     localStorage.setItem(REFRESH_TOKEN, refreshToken);
     localStorage.setItem(ID, id);
   };
-  const setItemsToAuth = ({ accessToken, refreshToken, id }: KakaoAuthResponse) => {
-    setAuthState({
-      id,
-      accessToken,
-      refreshToken,
-    });
-  };
 
   const mutation = useMutation<KakaoAuthResponse, unknown, { code: string }>(kakaoLogin, {
     onSuccess(data) {
-      setItemsToAuth(data);
       setItemsToLocalStorage(data);
     },
   });

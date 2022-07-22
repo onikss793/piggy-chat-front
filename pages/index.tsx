@@ -37,11 +37,11 @@ const Home: NextPage = () => {
   const router = useRouter();
   const goTo = (id: number) => router.push(Routes.CHAT_ROOM(id));
 
-  const [channelList, setChannelList] = useRecoilState(ChannelListState);
-
-  useEffect(() => {
-    setChannelList(channelData);
-  });
+  // const [channelList, setChannelList] = useRecoilState(ChannelListState);
+  //
+  // useEffect(() => {
+  //   setChannelList(channelData);
+  // });
 
   return (
     <Layout>
@@ -49,11 +49,11 @@ const Home: NextPage = () => {
 
       <Container>
         <RoomContainer>
-          <Title title={'채팅 방'} styles={{ textAlign: 'left' }} />
+          <Title title='채팅 방' styles={{ textAlign: 'left' }} />
 
-          <RoomUL>
-            {channelList.map(it => <RoomLi key={it.id} onClick={() => goTo(it.id)}>{it.name}</RoomLi>)}
-          </RoomUL>
+          {/*<RoomUL>*/}
+          {/*  {channelList.map(it => <RoomLi key={it.id} onClick={() => goTo(it.id)}>{it.name}</RoomLi>)}*/}
+          {/*</RoomUL>*/}
         </RoomContainer>
       </Container>
     </Layout>

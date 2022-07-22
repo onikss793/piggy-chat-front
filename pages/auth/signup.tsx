@@ -1,6 +1,6 @@
-import { isNil } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import { useRouter } from 'next/router';
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import type { SyntheticEvent } from 'react';
 import styled from 'styled-components';
 import { PlainHeader, Layout, Title } from 'components';
@@ -8,9 +8,9 @@ import { Color } from 'styles/palette';
 import SignupImg from 'public/assets/auth/Signup.png';
 import AppleLoginImg from 'public/assets/auth/AppleLogin.png';
 import KakaoLoginImg from 'public/assets/auth/KakaoLogin.png';
-import useAuth from 'lib/hooks/useAuth';
 import useKakaoLogin from 'lib/hooks/useKakaoLogin';
 import { Routes, URLS } from 'lib/utils';
+import useAuth from '../../lib/hooks/useAuth';
 
 const Container = styled.div`
   display: flex;
@@ -57,11 +57,11 @@ const LoginBtn = styled.a<{ image: { src: string } }>`
 
 const Signup = () => {
   const router = useRouter();
-  const auth = useAuth();
+  const { auth } = useAuth();
   const { mutate: kakaoMutate, data, error } = useKakaoLogin();
 
   useEffect(() => {
-    if (!isNil(auth.accessToken)) void router.replace(Routes.MAIN);
+    if (!isNil(auth?.accessToken)) void router.replace(Routes.MAIN);
   }, [auth]);
 
   useEffect(() => {
@@ -72,9 +72,9 @@ const Signup = () => {
   }, [router.query.code]);
 
   useEffect(() => {
-    if (!data) return;
+    if (isEmpty(data)) return;
 
-    if (!data.isSignedUpUser) {
+    if (!data?.isSignedUpUser) {
       void router.replace(Routes.PROFILE);
     } else {
       void router.replace(Routes.MAIN);
@@ -82,9 +82,7 @@ const Signup = () => {
   }, [data]);
 
   useEffect(() => {
-    if (error) {
-      void router.replace(Routes.SIGNUP);
-    }
+    if (error) void router.replace(Routes.SIGNUP);
   }, [error]);
 
   const appleLogin = (e: SyntheticEvent) => {
@@ -93,29 +91,27 @@ const Signup = () => {
   };
 
   return (
-    <Suspense fallback={<Signup />}>
-      <Layout>
-        <PlainHeader button='CANCEL'>
-          <Title title='회원가입' />
-        </PlainHeader>
+    <Layout>
+      <PlainHeader button='CANCEL'>
+        <Title title='회원가입' />
+      </PlainHeader>
 
-        <Container>
-          <BackgroundImg image={SignupImg} />
-          <Text>
-            회원가입 후 채팅을 통해<br />
-            부를 향한 정보를 축적하세요!
-          </Text>
+      <Container>
+        <BackgroundImg image={SignupImg} />
+        <Text>
+          회원가입 후 채팅을 통해<br />
+          부를 향한 정보를 축적하세요!
+        </Text>
 
-          <BtnContainer>
-            <LoginBtn onClick={appleLogin} image={AppleLoginImg} />
-            <LoginBtn
-              href={URLS.KAKAO_HREF}
-              image={KakaoLoginImg}
-            />
-          </BtnContainer>
-        </Container>
-      </Layout>
-    </Suspense>
+        <BtnContainer>
+          <LoginBtn onClick={appleLogin} image={AppleLoginImg} />
+          <LoginBtn
+            href={URLS.KAKAO_HREF}
+            image={KakaoLoginImg}
+          />
+        </BtnContainer>
+      </Container>
+    </Layout>
   );
 };
 
