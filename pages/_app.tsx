@@ -1,12 +1,20 @@
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { theme } from 'styles/breakpoints';
 import GlobalStyles from 'styles/global-styles';
 import { QueryClientProvider, QueryClient } from 'react-query';
 
 export const queryClient = new QueryClient();
+
+import '@stream-io/stream-chat-css/dist/css/index.css';
+import 'styles/app.css';
+
+const Root = styled.div`
+  margin: 0 auto;
+  max-width: 876px;
+`;
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -20,7 +28,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={theme}>
             <GlobalStyles />
-            <Component {...pageProps} />
+            <Root>
+              <Component {...pageProps} />
+            </Root>
           </ThemeProvider>
         </QueryClientProvider>
       </RecoilRoot>

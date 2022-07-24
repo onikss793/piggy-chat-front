@@ -28,5 +28,5 @@ export const Routes = {
   PROFILE: '/auth/profile',
   SIGNUP_DONE: '/auth/done',
   MAIN: '/',
-  CHAT_ROOM: (id: number) => `/chat/${id}`,
+  CHAT_ROOM: (id: number | string) => `/chat/${id}`,
 };

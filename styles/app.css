@@ -1,0 +1,32 @@
+/*.str-chat__main-panel {*/
+/*  padding: 0 !important;*/
+/*}*/
+
+.str-chat {
+  background-color: #F5F5F5 !important;
+}
+
+.str-chat__container {
+  width: 100% !important;
+}
+
+/*.str-chat__reverse-infinite-scroll {*/
+/*  padding-top: 0 !important;*/
+/*}*/
+
+/*.str-chat__list {*/
+/*  padding-bottom: 60px;*/
+/*  background-color: #DFDFDF !important;*/
+/*}*/
+
+.str-chat__ul {
+  /*overflow-y: scroll !important;*/
+}
+
+.str-chat__input-flat {
+  /*position: fixed;*/
+  /*bottom: 0;*/
+  /*left: 0;*/
+}
+
+

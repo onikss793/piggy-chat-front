@@ -1,6 +1,3 @@
-import { SendBirdProvider } from '@sendbird/uikit-react';
-import { ChannelProvider } from '@sendbird/uikit-react/Channel/context';
-import ChannelUI from '@sendbird/uikit-react/Channel/components/ChannelUI';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';

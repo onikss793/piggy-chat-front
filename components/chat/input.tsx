@@ -1,4 +1,3 @@
-import { useChannel } from '@sendbird/uikit-react/Channel/context';
 import styled from 'styled-components';
 import { Color } from 'styles/palette';
 import PlusImg from 'public/assets/chat/plus.png';
@@ -26,9 +25,9 @@ const Input = styled.input<{ image: { src: string } }>`
 `;
 
 const MyInput = () => {
-  const channelState = useChannel();
+  // const channelState = useChannel();
 
-  console.log(channelState);
+  // console.log(channelState);
   return (
     <Container>
       <Input placeholder='채팅 글을 입력해주세요.'  image={PlusImg}/>

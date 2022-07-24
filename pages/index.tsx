@@ -1,59 +1,123 @@
+import dayjs from 'dayjs';
+import { last } from 'lodash';
 import type { NextPage } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { Layout, MainHeader, Title } from 'components';
-import { ChannelListState } from 'store';
+import { Routes } from 'lib/utils';
+import { Chat } from 'stream-chat-react';
+import useChatClient from 'hooks/useChatClient';
+import useChatUser from 'hooks/useChatUser';
 import { Color } from 'styles/palette';
-import { Routes } from '../lib/utils';
 
 const Container = styled.div`
   padding: 0 16px;
 `;
 const RoomContainer = styled.section`
-
+  margin-top: 20px;
 `;
-const RoomUL = styled.ul`
-  margin-top: 16px;
+const ChatCard = styled.div`
+  background-color: ${Color['gray-100']};
+  padding: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+`;
+const ChatImg = styled(Image)`
+  width: 76px;
+  height: 76px;
+  border-radius: 10px;
+`;
+const ChatContent = styled.div`
+  margin-left: 16px;
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
+  justify-content: center;
 `;
-const RoomLi = styled.li`
-  background-color: ${Color['gray-100']};
-  display: flex;
-  padding: 16px;
-  border-radius: 8px;
-  cursor: pointer;
+const ChatTitle = styled.div`
+  font-weight: 700;
+  font-size: 16px;
 `;
-
-const channelData = [
-  { name: '주식방', id: 1, url: 'sendbird_group_channel_80291943_49d70995e6a588bbee0d9b8acd7aebd874016412' },
-  { name: '코인방', id: 2, url: 'sendbird_group_channel_80291943_49d70995e6a588bbee0d9b8acd7aebd874016412' },
-];
+const LastMessage = styled.div`
+  margin-top: 16px;
+  font-weight: 400;
+  font-size: 13px;
+`;
+const MemberCount = styled.span`
+  font-weight: 500;
+  margin-left: 8px;
+  font-size: 12px;
+  color: ${Color['gray-600']};
+`;
+const MinuteAgo = styled.div`
+  font-weight: 500;
+  margin-top: 2px;
+  font-size: 11px;
+  color: ${Color['gray-600']};
+`;
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const goTo = (id: number) => router.push(Routes.CHAT_ROOM(id));
+  const chatClient = useChatClient();
+  const { channels, me } = useChatUser({ id: 'Daniel', name: 'Daniel' });
 
-  // const [channelList, setChannelList] = useRecoilState(ChannelListState);
-  //
-  // useEffect(() => {
-  //   setChannelList(channelData);
-  // });
+  const goTo = (id: string) => router.push(Routes.CHAT_ROOM(id));
+  const getTimeDiff = (date: string) => {
+    const lastMessageAt = dayjs(date);
+    const now = dayjs();
+    const month = now.diff(lastMessageAt, 'month');
+
+    const day = now.diff(lastMessageAt, 'day');
+    const hour = now.diff(lastMessageAt, 'hour');
+    const min = now.diff(lastMessageAt, 'minute');
+    if (day > 29) {
+
+      return `${month}달`;
+    }
+    if (hour > 24) {
+      return `${day}일`;
+    }
+    if (min > 60) {
+      return `${hour}시간`;
+    }
+    return `${min}분`;
+  };
 
   return (
     <Layout>
       <MainHeader />
 
       <Container>
-        <RoomContainer>
-          <Title title='채팅 방' styles={{ textAlign: 'left' }} />
+        <Title title='채팅 방' styles={{ textAlign: 'left' }} />
 
-          {/*<RoomUL>*/}
-          {/*  {channelList.map(it => <RoomLi key={it.id} onClick={() => goTo(it.id)}>{it.name}</RoomLi>)}*/}
-          {/*</RoomUL>*/}
+        <RoomContainer>
+          {chatClient ? <Chat client={chatClient}>
+            {channels?.length ? channels.map(channel => (
+              <ChatCard onClick={() => channel?.id && goTo(channel?.id)} key={channel.id}>
+                <ChatImg
+                  src={channel.data?.image as string}
+                  layout='fixed'
+                  objectFit='cover'
+                  width='76px'
+                  height='76px'
+                />
+
+                <ChatContent>
+                  <ChatTitle>
+                    {channel.data?.name}
+                    <MemberCount>
+                      {channel.data?.member_count as number}명 참여
+                    </MemberCount>
+                  </ChatTitle>
+
+                  <LastMessage>{last(channel.state.messages)?.text}</LastMessage>
+
+                  <MinuteAgo>{getTimeDiff(channel.data?.last_message_at as string)} 전</MinuteAgo>
+                </ChatContent>
+              </ChatCard>
+            )) : null}
+          </Chat> : null}
         </RoomContainer>
       </Container>
     </Layout>
